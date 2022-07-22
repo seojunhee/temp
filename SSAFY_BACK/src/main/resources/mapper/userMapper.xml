@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafit.model.dao.UserDao">
+	<insert id="insertUser" parameterType="user">
+		insert into user values(#{id}, #{password}, #{email}, #{nickname})
+	</insert>
+	<select id="selectById" parameterType="string" resultType="user">
+		select * from user where id like #{id}
+	</select>
+	<!-- 팔로워 관련 -->
+	<select id="selectFollowListById" parameterType="string" resultType="user">
+		select user.id, user.nickname
+		 from follow, user
+		where follow.user_id = #{id}
+		  and follow.follow_id = user.id 
+	</select>
+	<select id="selectFollowerListById" parameterType="string" resultType="user">
+		select user.id, user.nickname
+		 from follow, user
+		where follow.follow_id = #{id}
+		  and follow.user_id = user.id 
+	</select>
+	<insert id="insertFollow">
+		insert into follow(user_id, follow_id)
+		values(#{userId}, #{followId})
+	</insert>
+	<delete id="deleteFollow">
+		delete from follow
+		 where user_id = #{userId}
+		   and follow_id = #{followId}
+	</delete>
+	
+	<update id="updateUser" parameterType="user">
+		update user
+		   set password = #{password},
+		       email = #{email},
+		       nickname = #{nickname}
+		 where id = #{id}
+	</update>
+	<delete id="deleteUser" parameterType="string">
+		delete from user
+		 where id = #{id}
+	</delete>
+	<insert id="insertLikeVideo">
+		insert into like_video values(#{videoId}, #{userId})
+	</insert>
+	<delete id="deleteLikeVideo">
+		delete from like_video 
+		 where (video_id, user_id) = (#{videoId}, #{userId})
+	</delete>
+</mapper>
